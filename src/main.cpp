@@ -8,9 +8,10 @@
 
 using namespace std;
 
-bool find_day9_sum(const deque<unsigned long long> &data, unsigned long long sum)
+template< class InputIt>
+bool find_day9_sum(const InputIt first, const InputIt last, unsigned long long sum)
 {
-    const size_t N = data.size();
+    const size_t N = last - first;
     const size_t K = 2;
 
     std::string bitmask(K, 1); // K leading 1's
@@ -22,10 +23,10 @@ bool find_day9_sum(const deque<unsigned long long> &data, unsigned long long sum
         for (size_t i = 0; i < N; ++i) // [0..N-1] integers
         {
             if (bitmask[i]) {
-                // std::cout << " " << data.at(i);
-                calculated_sum += data.at(i);
-                if (data.at(i) > sum) {
-                    // cout << " > early exit by: " << data.at(i) << endl;
+                // std::cout << " " << *(first + i);
+                calculated_sum += *(first + i);
+                if (*(first + i) > sum) {
+                    // cout << " > early exit by: " << *(first + i) << endl;
                     continue;
                 }
             }
@@ -48,8 +49,9 @@ bool shift_frame( fstream& sfile, deque<unsigned long long>& frame, size_t windo
     bool is_first = frame.size() < windows_size + 1;
     bool new_data = false;
 
-    if (frame.size() > windows_size)
+    if (frame.size() > windows_size) {
         frame.pop_front();
+    }
 
     while ( frame.size() < windows_size + 1 && getline(sfile, line) )
     {
@@ -57,6 +59,11 @@ bool shift_frame( fstream& sfile, deque<unsigned long long>& frame, size_t windo
         sline >> number;
         frame.push_back(number);
         new_data = true;
+    }
+
+    if (frame.size() < windows_size + 1) {
+        // frame was not filled
+        return false;
     }
 
     // print frame
@@ -73,19 +80,17 @@ bool shift_frame( fstream& sfile, deque<unsigned long long>& frame, size_t windo
 bool find_day9_wrong_sum( const string& filename, size_t windows_size, unsigned long long& sum )
 {
     fstream sfile( filename );
-    deque<unsigned long long> window;
+    deque<unsigned long long> frame;
     unsigned long long check_sum;
 
-    while ( shift_frame( sfile, window, windows_size ) )
+    while ( shift_frame( sfile, frame, windows_size ) )
     {
-        check_sum = window.at(window.size() - 1);
+        check_sum = frame.at(frame.size() - 1);
         cout << "check sum: " << check_sum << endl;
-        window.pop_back();
-        if( !find_day9_sum( window, check_sum ) ) {
+        if( !find_day9_sum( frame.begin(), frame.end() - 1, check_sum ) ) {
             sum = check_sum;
             return true;
         }
-        window.push_back(check_sum);
     }
 
     return false;
