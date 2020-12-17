@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <deque>
+#include <cstdlib>
 
 using namespace std;
 
@@ -62,7 +63,7 @@ bool shift_frame( fstream& sfile, deque<unsigned long long>& frame, size_t windo
     }
 
     if (frame.size() < windows_size + 1) {
-        // frame was not filled
+        cout << "frame was not filled" << endl;
         return false;
     }
 
@@ -80,6 +81,11 @@ bool shift_frame( fstream& sfile, deque<unsigned long long>& frame, size_t windo
 bool find_day9_wrong_sum( const string& filename, size_t windows_size, unsigned long long& sum )
 {
     fstream sfile( filename );
+    if (!sfile.is_open()) {
+        cout << "can't open file" << endl;
+        return false;
+    }
+
     deque<unsigned long long> frame;
     unsigned long long check_sum;
 
@@ -98,10 +104,22 @@ bool find_day9_wrong_sum( const string& filename, size_t windows_size, unsigned 
 
 int main(int argc, char const *argv[])
 {
-    size_t WINDOW_SIZE = 25;
+    if (argc < 2)
+    {
+        // at least 2 arguments
+        // filename windows_size
+        return 1;
+    }
+
+    const string filename = argv[1];
+    const size_t windows_size = atol(argv[2]);
+
+    cout << "Filename: " << filename << endl;
+    cout << "Window size: " << windows_size << endl;
+
     unsigned long long sum;
-    if (find_day9_wrong_sum("day9.data", WINDOW_SIZE, sum))
-        cout << "It's a wrong number: " << sum << endl;
+    if ( find_day9_wrong_sum( filename, windows_size, sum ) )
+        cout << "There is a wrong number: " << sum << endl;
     else
         cout << "All numbers are OK" << endl;
 
