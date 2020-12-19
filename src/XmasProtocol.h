@@ -3,7 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <deque>
-#include <fstream>
+#include <istream>
 
 class XmasProtocol
 {
@@ -46,8 +46,8 @@ private:
         return false;
     }
 
-    bool ShiftFrame(std::fstream &sfile, std::deque<unsigned long long> &frame, size_t windows_size);
+    bool ShiftFrame(std::istream &stream, std::deque<unsigned long long> &frame, size_t windows_size);
 
 public:
-    bool CheckBytes(const std::string &filename, size_t windows_size, unsigned long long &out_byte);
+    bool CheckBytes(std::istream &stream, size_t windows_size, unsigned long long &out_byte);
 };

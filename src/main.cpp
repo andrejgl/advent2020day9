@@ -1,6 +1,7 @@
 #include "XmasProtocol.h"
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <cstdlib>
 
@@ -12,6 +13,7 @@ int main(int argc, char const *argv[])
     {
         // at least 2 arguments
         // filename windows_size
+        cout << "Usage: " << argv[0] << " FILENAME WINDOWS_SIZE\n";
         return 1;
     }
 
@@ -23,8 +25,15 @@ int main(int argc, char const *argv[])
 
     XmasProtocol proto;
     unsigned long long bad_byte;
+    fstream file_stream(filename);
 
-    if (!proto.CheckBytes(filename, windows_size, bad_byte))
+    if (!file_stream.is_open())
+    {
+        cout << "can't open file: " << filename << endl;
+        return false;
+    }
+
+    if (!proto.CheckBytes(file_stream, windows_size, bad_byte))
         cout << "There is a wrong number: " << bad_byte << endl;
     else
         cout << "All numbers are OK" << endl;

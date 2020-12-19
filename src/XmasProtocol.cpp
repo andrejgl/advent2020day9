@@ -1,15 +1,11 @@
 #include "XmasProtocol.h"
 
 #include <iostream>
-#include <vector>
-#include <algorithm>
-#include <fstream>
 #include <sstream>
-#include <cstdlib>
 
 using namespace std;
 
-bool XmasProtocol::ShiftFrame(fstream &sfile, deque<unsigned long long> &frame, size_t windows_size)
+bool XmasProtocol::ShiftFrame(std::istream &stream, deque<unsigned long long> &frame, size_t windows_size)
 {
     string line;
     unsigned long long number;
@@ -21,7 +17,7 @@ bool XmasProtocol::ShiftFrame(fstream &sfile, deque<unsigned long long> &frame, 
         frame.pop_front();
     }
 
-    while (frame.size() < windows_size + 1 && getline(sfile, line))
+    while (frame.size() < windows_size + 1 && getline(stream, line))
     {
         stringstream sline(line);
         sline >> number;
@@ -46,19 +42,12 @@ bool XmasProtocol::ShiftFrame(fstream &sfile, deque<unsigned long long> &frame, 
     return new_data;
 }
 
-bool XmasProtocol::CheckBytes(const string &filename, size_t windows_size, unsigned long long &out_byte)
+bool XmasProtocol::CheckBytes(std::istream &stream, size_t windows_size, unsigned long long &out_byte)
 {
-    fstream sfile(filename);
-    if (!sfile.is_open())
-    {
-        cout << "can't open file" << endl;
-        return false;
-    }
-
     deque<unsigned long long> frame;
     unsigned long long check_sum;
 
-    while (ShiftFrame(sfile, frame, windows_size))
+    while (ShiftFrame(stream, frame, windows_size))
     {
         check_sum = frame.at(frame.size() - 1);
         cout << "check sum: " << check_sum << endl;
