@@ -24,19 +24,31 @@ int main(int argc, char const *argv[])
     cout << "Window size: " << windows_size << endl;
 
     XmasProtocol proto;
-    unsigned long long bad_byte;
-    fstream file_stream(filename);
+    unsigned long long invalid_number;
 
+    // open file
+    fstream file_stream(filename);
     if (!file_stream.is_open())
     {
         cout << "can't open file: " << filename << endl;
         return false;
     }
 
-    if (!proto.CheckBytes(file_stream, windows_size, bad_byte))
-        cout << "There is a wrong number: " << bad_byte << endl;
+    // Part 1. Check bytes for invalid number
+    if (!proto.CheckBytes(file_stream, windows_size, invalid_number))
+        cout << "There is an invalid number: " << invalid_number << endl;
     else
         cout << "All numbers are OK" << endl;
+
+    file_stream.clear();
+    file_stream.seekg(0);
+
+    // Part2. find Min Max sum in sequance
+    unsigned long long sum;
+    if (proto.FindSumMinMax(file_stream, invalid_number, sum))
+        cout << "Found Min Max sequence sum: " << sum << " for " << invalid_number << endl;
+    else
+        cout << "Min Max sequence sum not found for " << invalid_number << endl;
 
     return 0;
 }

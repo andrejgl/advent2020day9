@@ -9,7 +9,7 @@ class XmasProtocol
 {
 private:
     template <class InputIt>
-    bool CheckSum(const InputIt first, const InputIt last, unsigned long long sum)
+    bool CheckSum(InputIt first, InputIt last, unsigned long long sum)
     {
         const size_t N = last - first;
         const size_t K = 2;
@@ -49,5 +49,6 @@ private:
     bool ShiftFrame(std::istream &stream, std::deque<unsigned long long> &frame, size_t windows_size);
 
 public:
-    bool CheckBytes(std::istream &stream, size_t windows_size, unsigned long long &out_byte);
+    bool CheckBytes(std::istream &stream, size_t windows_size, unsigned long long &invalid_number);
+    bool FindSumMinMax(std::istream &stream, const unsigned long long &in_number, unsigned long long &out_sum);
 };
